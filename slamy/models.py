@@ -7,8 +7,14 @@ class Word(models.Model):
     image_url = models.ImageField(upload_to='images/', null=True, blank=True)
     source = models.ForeignKey('Source', on_delete=models.CASCADE, null=False, blank=False)
 
+    def __str__(self):
+        return self.word
+
 
 class Source(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False)
     url = models.URLField(null=True, blank=True)
     author = models.CharField(max_length=50, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
