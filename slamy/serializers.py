@@ -7,32 +7,35 @@ class WordSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'word', 'short_description']
 
 
-class RelatedWordsSerializer(serializers.HyperlinkedModelSerializer):
+class RelatedWordsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Related_Words
         fields = ['related', 'id']
 
 
-class WordDetailedSerializer(serializers.HyperlinkedModelSerializer):
+class WordDetailedSerializer(serializers.ModelSerializer):
+    related_words = serializers.SerializerMethodField()
+
     class Meta:
         model = Word
         fields = ['word', 'detailed_description', 'image_url', 'source', 'related_words']
 
     def get_related_words(self, obj):
         try:
-            related_words = Words.objects.prefetch_related("related_words").values("related_words__related").all()
+            related_words = Related_Words.objects.filter(word=obj.pk)
+            print(related_words)
             serializer = RelatedWordsSerializer(related_words, many=True)
             output = []
             for r_word in serializer.data:
                 tmp_dict = {}
-                tmp_dict[r_word["related"]] = self.context['request']._current_scheme_host + r_word["id"]
+                tmp_dict[Word.objects.values_list('word', flat=True).get(pk=r_word['related'])] = r_word['related']
                 output.append(tmp_dict)
             return output
         except:
-            return ""
+            return []
 
 
-class SourceSerializer(serializers.HyperlinkedModelSerializer):
+class SourceSerializer(serializers.HyperlinkedModelSerializer): 
     class Meta:
         model = Source
         fields = ['name', 'url', 'author']

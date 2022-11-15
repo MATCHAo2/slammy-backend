@@ -18,6 +18,7 @@ class WordViewSet(viewsets.ModelViewSet):
     serializer_class = WordSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # Change serializer if request is list or not
     def get_serializer_class(self, *args, **kwargs):
         if self.action != 'list':
             return WordDetailedSerializer
