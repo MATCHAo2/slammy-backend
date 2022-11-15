@@ -15,7 +15,7 @@ class Word(models.Model):
     short_description = models.CharField(max_length=100, null=False, blank=False)
     detailed_description = models.TextField(max_length=500, null=True, blank=False)
     image_url = models.ImageField(upload_to='images/', null=True, blank=True)
-    source = models.ForeignKey(Source, on_delete=models.CASCADE, null=False, blank=False)
+    source = models.ForeignKey(Source, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.word
