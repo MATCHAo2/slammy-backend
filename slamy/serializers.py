@@ -13,8 +13,15 @@ class RelatedWordsSerializer(serializers.ModelSerializer):
         fields = ['related', 'id']
 
 
+class SourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Source
+        fields = ['id', 'name', 'url', 'author']
+
+
 class WordDetailedSerializer(serializers.ModelSerializer):
     related_words = serializers.SerializerMethodField()
+    source = serializers.SerializerMethodField()
 
     class Meta:
         model = Word
@@ -23,7 +30,6 @@ class WordDetailedSerializer(serializers.ModelSerializer):
     def get_related_words(self, obj):
         try:
             related_words = Related_Words.objects.filter(word=obj.pk)
-            print(related_words)
             serializer = RelatedWordsSerializer(related_words, many=True)
             output = []
             for r_word in serializer.data:
@@ -34,11 +40,16 @@ class WordDetailedSerializer(serializers.ModelSerializer):
         except:
             return []
 
-
-class SourceSerializer(serializers.HyperlinkedModelSerializer): 
-    class Meta:
-        model = Source
-        fields = ['name', 'url', 'author']
+    def get_source(self, obj):
+            source = Source.objects.filter(name=obj.source)
+            serializer = SourceSerializer(source, many=True)
+            output = []
+            for s_word in serializer.data:
+                tmp_dict = {}
+                print(s_word)
+                tmp_dict[Source.objects.values_list('name', flat=True).get(pk=s_word['id'])] = s_word['id']
+                output.append(tmp_dict)
+            return output
 
 
 class RelatedWordSerializer(serializers.HyperlinkedModelSerializer):
