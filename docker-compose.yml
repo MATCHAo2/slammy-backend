@@ -1,0 +1,42 @@
+version: "3" 
+services:
+    gunicorn:
+        build: .
+        links:
+            - "postgres"
+        env_file:
+            - ".env"
+        volumes:
+            - .:${APP_ROOT}
+            - static:${STATIC_ROOT}
+            - media:${MEDIA_ROOT}
+        restart: always
+
+    nginx:
+        image: nginx
+        env_file:
+            - ".env"
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/templates/default.conf.template
+            - static:$STATIC_ROOT
+        ports:
+            - 80:80
+        restart: always
+
+    postgres:
+        image: postgres:14
+        env_file:
+            - ".env"
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        restart: always
+
+volumes:
+  static:
+    driver: local
+  media:
+    driver: local
+  client:
+    driver: local
+  pgdata:
+    driver: local
