@@ -18,6 +18,12 @@ class WordViewSet(viewsets.ModelViewSet):
     serializer_class = WordSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_serializer_class(self, *args, **kwargs):
+        if self.action != 'list':
+            return WordDetailedSerializer
+        else:
+            return self.serializer_class
+
 
 class SourceViewSet(viewsets.ModelViewSet):
     # API endpoint that allows Source to be viewed or created.
