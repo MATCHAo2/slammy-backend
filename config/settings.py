@@ -129,3 +129,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(',')
+
+
+# django-cors-headers
+# Allow all hosts
+CORS_ORIGIN_WHITELIST = ('*')
